@@ -9,21 +9,21 @@ import { Provider } from "react-redux";
 import configureStore from "redux-mock-store";
 
 // Fake Node server to mock repsonses from iTunes API
-// const server = setupServer(
-//   rest.get("/search?artists", (req, res, ctx) => {
-//     return res(ctx.json({ data: "JSON OBJECT HERE" }));
-//   }),
-//   rest.get("/search?album", (req, res, ctx) => {
-//     return res(ctx.json({ data: "JSON OBJECT HERE" }));
-//   }),
-//   rest.get("/search?song", (req, res, ctx) => {
-//     return res(ctx.json({ data: "JSON OBJECT HERE" }));
-//   })
-// );
+const server = setupServer(
+  rest.get("/search?artists", (req, res, ctx) => {
+    return res(ctx.json({ data: "JSON OBJECT HERE" }));
+  }),
+  rest.get("/search?album", (req, res, ctx) => {
+    return res(ctx.json({ data: "JSON OBJECT HERE" }));
+  }),
+  rest.get("/search?song", (req, res, ctx) => {
+    return res(ctx.json({ data: "JSON OBJECT HERE" }));
+  })
+);
 
-// beforeAll(() => server.listen());
-// afterEach(() => server.resetHandlers());
-// afterAll(() => server.close());
+beforeAll(() => server.listen());
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
 
 // IntersectionObserver isn't available in test environment so we need to mock observer
 beforeEach(() => {
