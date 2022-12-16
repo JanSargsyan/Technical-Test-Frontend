@@ -1,0 +1,505 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Extended Fraud Data API",
+    "description": "Extended Fraud Data API to be used to exchange information before initiating a FPS request",
+    "contact": {
+      "email": "efd@wearepay.uk"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/EFD_Mockup/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
+  "tags": [
+    {
+      "name": "admins",
+      "description": "Secured Admin-only calls"
+    },
+    {
+      "name": "developers",
+      "description": "Operations available to regular developers"
+    }
+  ],
+  "paths": {
+    "/exchangeFraudData": {
+      "post": {
+        "tags": [
+          "developers"
+        ],
+        "summary": "initiates EFD data request, from PSP originating payment to payment destination PSP",
+        "description": "initiates EFD data request, from PSP originating payment to payment destination PSP\n",
+        "requestBody": {
+          "description": "optional description\n",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EFDDataRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EFDDataResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EFDDataRequest": {
+        "type": "object",
+        "description": "Specifies the data sent by the originating PSP.",
+        "additionalProperties": false,
+        "properties": {
+          "originAccountNumber": {
+            "$ref": "#/components/schemas/AccountNumber"
+          },
+          "originSortCode": {
+            "$ref": "#/components/schemas/SortCode"
+          },
+          "originReference": {
+            "$ref": "#/components/schemas/Max35Text"
+          },
+          "destinationAccountNumber": {
+            "$ref": "#/components/schemas/AccountNumber"
+          },
+          "destinationSortCode": {
+            "$ref": "#/components/schemas/SortCode"
+          },
+          "destinationReference": {
+            "$ref": "#/components/schemas/Max35Text"
+          },
+          "paymentTimestamp": {
+            "$ref": "#/components/schemas/ISODateTime"
+          },
+          "paymentValue": {
+            "$ref": "#/components/schemas/CurrencyAndAmount"
+          },
+          "paymentPurpose": {
+            "$ref": "#/components/schemas/ExternalPurpose1Code"
+          },
+          "originAccountOpeningDate": {
+            "$ref": "#/components/schemas/ISODate"
+          },
+          "originAccountTurnover": {
+            "$ref": "#/components/schemas/CurrencyAndAmount"
+          },
+          "originAccountHolderDateOfBirth": {
+            "$ref": "#/components/schemas/ISODate"
+          },
+          "originAccountType": {
+            "$ref": "#/components/schemas/AccountType2Code"
+          },
+          "originAccountBusinessSector": {
+            "$ref": "#/components/schemas/ExternalPurpose1Code"
+          },
+          "paymentValueAsPercentageOfOriginAccountBalance": {
+            "type": "number",
+            "maximum": 100
+          },
+          "paymentChannel": {
+            "$ref": "#/components/schemas/TransactionChannel5Code"
+          }
+        },
+        "required": [
+          "originAccountNumber",
+          "originSortCode",
+          "destinationAccountNumber",
+          "destinationSortCode",
+          "paymentTimestamp",
+          "paymentValue",
+          "originAccountTurnover",
+          "originAccountType",
+          "paymentValueAsPercentageOfOriginAccountBalance",
+          "paymentChannel"
+        ]
+      },
+      "EFDDataResponse": {
+        "type": "object",
+        "description": "Specifies the data returned by the destination PSP.",
+        "additionalProperties": false,
+        "properties": {
+          "destinationAccountOpeningDate": {
+            "$ref": "#/components/schemas/ISODate"
+          },
+          "destinationAccountTurnover": {
+            "$ref": "#/components/schemas/CurrencyAndAmount"
+          },
+          "destinationAccountDateOfLastCredit": {
+            "$ref": "#/components/schemas/ISODate"
+          },
+          "destinationAccountAverageCreditValueLastSixMonths": {
+            "$ref": "#/components/schemas/CurrencyAndAmount"
+          },
+          "destinationAccountHolderDateOfBirth": {
+            "$ref": "#/components/schemas/ISODate"
+          },
+          "destinationAccountType": {
+            "$ref": "#/components/schemas/AccountType2Code"
+          },
+          "destinationAccountBusinessSector": {
+            "$ref": "#/components/schemas/ExternalPurpose1Code"
+          },
+          "paymentValueAsPrecentageOfDestinationAccountBalance": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "destinationAccountTurnover",
+          "destinationAccountDateOfLastCredit",
+          "destinationAccountAverageCreditValueLastSixMonths",
+          "destinationAccountType",
+          "paymentValueAsPrecentageOfDestinationAccountBalance"
+        ]
+      },
+      "SortCode": {
+        "description": "The sort code for an account",
+        "type": "string",
+        "pattern": "^[0-9]{6}$"
+      },
+      "AccountNumber": {
+        "description": "The account number for an account",
+        "type": "string",
+        "pattern": "^[0-9]{8}$"
+      },
+      "Max35Text": {
+        "type": "string",
+        "description": "Specifies a character string with a maximum length of 35 characters.",
+        "minLength": 1,
+        "maxLength": 35
+      },
+      "CashAccount205": {
+        "type": "object",
+        "description": "Provides the details of an account.",
+        "additionalProperties": false,
+        "properties": {
+          "identification": {
+            "$ref": "#/components/schemas/AccountIdentification4Choice"
+          },
+          "type": {
+            "$ref": "#/components/schemas/CashAccountType2Choice"
+          },
+          "opening_date": {
+            "$ref": "#/components/schemas/ISODate"
+          },
+          "turnover": {
+            "$ref": "#/components/schemas/ActiveCurrencyAndAmount"
+          },
+          "last_credit": {
+            "$ref": "#/components/schemas/ISODate"
+          },
+          "average_credit_last": {
+            "$ref": "#/components/schemas/ActiveCurrencyAndAmount"
+          },
+          "business_type": {
+            "$ref": "#/components/schemas/Max35Text"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/AmountAndDirection41"
+          }
+        },
+        "required": [
+          "opening_date",
+          "balance"
+        ]
+      },
+      "AccountIdentification4Choice": {
+        "type": "object",
+        "description": "Specifies the unique identification of an account as assigned by the account servicer.",
+        "additionalProperties": false,
+        "properties": {
+          "other": {
+            "$ref": "#/components/schemas/GenericAccountIdentification1"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "other"
+            ]
+          }
+        ]
+      },
+      "GenericAccountIdentification1": {
+        "type": "object",
+        "description": "Information related to a generic account identification.",
+        "additionalProperties": false,
+        "properties": {
+          "identification": {
+            "$ref": "#/components/schemas/Max34Text"
+          },
+          "scheme_name": {
+            "$ref": "#/components/schemas/AccountSchemeName1Choice"
+          }
+        },
+        "required": [
+          "identification"
+        ]
+      },
+      "Max34Text": {
+        "type": "string",
+        "description": "Specifies a character string with a maximum length of 34 characters.",
+        "minLength": 1,
+        "maxLength": 34
+      },
+      "AccountSchemeName1Choice": {
+        "type": "object",
+        "description": "Sets of elements to identify a name of the identification scheme.",
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ExternalAccountIdentification1Code"
+          },
+          "proprietary": {
+            "$ref": "#/components/schemas/Max35Text"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "code"
+            ]
+          },
+          {
+            "required": [
+              "proprietary"
+            ]
+          }
+        ]
+      },
+      "ExternalAccountIdentification1Code": {
+        "type": "string",
+        "description": "Specifies the external account identification scheme name code in the format of character string with a maximum length of 4 characters.\r\nThe list of valid codes is an external code list published separately.\r\nExternal code sets can be downloaded from www.iso20022.org.",
+        "minLength": 1,
+        "maxLength": 4
+      },
+      "CashAccountType2Choice": {
+        "type": "object",
+        "description": "Nature or use of the account.",
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/AccountType2Code"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "code"
+            ]
+          }
+        ]
+      },
+      "AccountType2Code": {
+        "type": "string",
+        "enum": [
+          "BIZZ",
+          "CORP",
+          "PRSN"
+        ]
+      },
+      "ISODate": {
+        "type": "string",
+        "description": "A particular point in the progression of time in a calendar year expressed in the YYYY-MM-DD format. This representation is defined in \"XML Schema Part 2: Datatypes Second Edition - W3C Recommendation 28 October 2004\" which is aligned with ISO 8601.",
+        "pattern": "^(?:[1-9]\\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)$"
+      },
+      "ActiveCurrencyAndAmount": {
+        "type": "object",
+        "description": "A number of monetary units specified in an active currency where the unit of currency is explicit and compliant with ISO 4217.",
+        "properties": {
+          "currency": {
+            "$ref": "#/components/schemas/ActiveCurrencyCode"
+          },
+          "amount": {
+            "type": "string",
+            "maxLength": 19
+          }
+        }
+      },
+      "ActiveCurrencyCode": {
+        "type": "string",
+        "description": "A code allocated to a currency by a Maintenance Agency under an international identification scheme as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\".",
+        "pattern": "^[A-Z]{3,3}$"
+      },
+      "AmountAndDirection41": {
+        "type": "object",
+        "description": "Signed amount.",
+        "additionalProperties": false,
+        "properties": {
+          "amount": {
+            "$ref": "#/components/schemas/CurrencyAndAmount"
+          },
+          "sign": {
+            "$ref": "#/components/schemas/PlusOrMinusIndicator"
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      },
+      "CurrencyAndAmount": {
+        "type": "object",
+        "description": "Number of monetary units specified in a currency, where the unit of currency is explicit and compliant with ISO 4217. The decimal separator is a dot.\nNote: A zero amount is considered a positive amount.",
+        "properties": {
+          "currency": {
+            "$ref": "#/components/schemas/CurrencyCode"
+          },
+          "amount": {
+            "type": "string",
+            "maxLength": 19
+          }
+        }
+      },
+      "CurrencyCode": {
+        "type": "string",
+        "description": "Code allocated to a currency, by a maintenance agency, under an international identification scheme as described in the latest edition of the international standard ISO 4217 \"Codes for the representation of currencies and funds\". Valid currency codes are registered with the ISO 4217 Maintenance Agency, and consist of three contiguous letters.",
+        "pattern": "^[A-Z]{3,3}$"
+      },
+      "PlusOrMinusIndicator": {
+        "type": "boolean",
+        "description": "Indicates a positive or negative value."
+      },
+      "PartyIdentification135": {
+        "type": "object",
+        "description": "Specifies the identification of a person or an organisation.",
+        "additionalProperties": false,
+        "properties": {
+          "identification": {
+            "$ref": "#/components/schemas/Party38Choice"
+          }
+        }
+      },
+      "Party38Choice": {
+        "type": "object",
+        "description": "Nature or use of the account.",
+        "additionalProperties": false,
+        "properties": {
+          "private_identification": {
+            "$ref": "#/components/schemas/PersonIdentification13"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "private_identification"
+            ]
+          }
+        ]
+      },
+      "PersonIdentification13": {
+        "type": "object",
+        "description": "Unique and unambiguous way to identify a person.",
+        "additionalProperties": false,
+        "properties": {
+          "date_and_place_of_birth": {
+            "$ref": "#/components/schemas/DateAndPlaceOfBirth1"
+          }
+        }
+      },
+      "DateAndPlaceOfBirth1": {
+        "type": "object",
+        "description": "Date and place of birth of a person.",
+        "additionalProperties": false,
+        "properties": {
+          "birth_date": {
+            "$ref": "#/components/schemas/ISODate"
+          }
+        },
+        "required": [
+          "birth_date"
+        ]
+      },
+      "DateAndDateTime2Choice": {
+        "type": "object",
+        "description": "Choice between a date or a date and time format.",
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "$ref": "#/components/schemas/ISODate"
+          },
+          "date_time": {
+            "$ref": "#/components/schemas/ISODateTime"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "date"
+            ]
+          },
+          {
+            "required": [
+              "date_time"
+            ]
+          }
+        ]
+      },
+      "ISODateTime": {
+        "type": "string",
+        "description": "A particular point in the progression of time defined by a mandatory date and a mandatory time component, expressed in either UTC time format (YYYY-MM-DDThh:mm:ss.sssZ), local time with UTC offset format (YYYY-MM-DDThh:mm:ss.sss+/-hh:mm), or local time format (YYYY-MM-DDThh:mm:ss.sss). These representations are defined in \"XML Schema Part 2: Datatypes Second Edition - W3C Recommendation 28 October 2004\" which is aligned with ISO 8601.\nNote on the time format:\n1) beginning / end of calendar day\n00:00:00 = the beginning of a calendar day\n24:00:00 = the end of a calendar day\n2) fractions of second in time format\nDecimal fractions of seconds may be included. In this case, the involved parties shall agree on the maximum number of digits that are allowed.",
+        "pattern": "^(?:[1-9]\\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)T(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.[0-9]+)?(?:Z|[+-][01]\\d:[0-5]\\d)?$"
+      },
+      "Purpose2Choice": {
+        "type": "object",
+        "description": "Specifies the underlying reason for the payment transaction.\nUsage: Purpose is used by the end-customers, that is initiating party, (ultimate) debtor, (ultimate) creditor to provide information concerning the nature of the payment. Purpose is a content element, which is not used for processing by any of the agents involved in the payment chain.",
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/ExternalPurpose1Code"
+          },
+          "proprietary": {
+            "$ref": "#/components/schemas/Max35Text"
+          }
+        },
+        "oneOf": [
+          {
+            "required": [
+              "code"
+            ]
+          },
+          {
+            "required": [
+              "proprietary"
+            ]
+          }
+        ]
+      },
+      "ExternalPurpose1Code": {
+        "type": "string",
+        "description": "Specifies the external purpose code in the format of character string with a maximum length of 4 characters.\r\nThe list of valid codes is an external code list published separately.\r\nExternal code sets can be downloaded from www.iso20022.org.",
+        "minLength": 1,
+        "maxLength": 4
+      },
+      "TransactionChannel5Code": {
+        "type": "string",
+        "description": "Identifies the type of the communication channels used by the cardholder to the acceptor system.",
+        "enum": [
+          "MAIL",
+          "TLPH",
+          "ECOM",
+          "TVPY",
+          "SECM",
+          "MOBL",
+          "MPOS"
+        ]
+      }
+    }
+  }
+}
